@@ -17,6 +17,9 @@ package cmd
 
 import (
 	"fmt"
+	"git-user-switch/gituser"
+	"git-user-switch/profile"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -32,7 +35,36 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("set called")
+		// とりあえず今だけグローバルユーザーに自動でセットさせる
+		gu, err := gituser.New(gituser.TargetScopeGlobal)
+		if err != nil {
+			os.Exit(1)
+		}
+		c := profile.Profiles{}
+		if err := c.Load(); err != nil {
+			fmt.Printf("error : %s\n", err)
+			os.Exit(1)
+		}
+		for _, p := range c {
+			if p.NickName == args[0] {
+				gu.Name = p.Name
+				gu.Email = p.Email
+				if err := gu.SetConfig(); err != nil {
+					fmt.Printf("error : %s\n", err)
+					os.Exit(1)
+				}
+			}
+		}
+	},
+	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		ps := profile.Profiles{}
+		ps.Load()
+
+		nicknames := []string{}
+		for _, p := range ps {
+			nicknames = append(nicknames, p.NickName)
+		}
+		return nicknames, cobra.ShellCompDirectiveNoFileComp | cobra.ShellCompDirectiveNoSpace
 	},
 }
 

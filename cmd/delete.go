@@ -17,6 +17,8 @@ package cmd
 
 import (
 	"fmt"
+	"git-user-switch/profile"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -31,8 +33,44 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
+
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("delete called")
+		c := profile.Profiles{}
+		if err := c.Load(); err != nil {
+			fmt.Printf("error : %s\n", err)
+			os.Exit(1)
+		}
+
+		if len(args) < 1 {
+			fmt.Print("error :delete target nickname must be specified\n")
+			os.Exit(1)
+		}
+
+		notMatched := true
+		for _, p := range c {
+			if p.NickName == args[0] {
+				c.Delete(p)
+				notMatched = false
+			}
+		}
+		if notMatched {
+			fmt.Print("error :delete target nickname not found\n")
+			os.Exit(1)
+		}
+		if err := c.Save(); err != nil {
+			fmt.Printf("error : %s\n", err)
+			os.Exit(1)
+		}
+	},
+	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		ps := profile.Profiles{}
+		ps.Load()
+
+		nicknames := []string{}
+		for _, p := range ps {
+			nicknames = append(nicknames, p.NickName)
+		}
+		return nicknames, cobra.ShellCompDirectiveNoFileComp | cobra.ShellCompDirectiveNoSpace
 	},
 }
 
