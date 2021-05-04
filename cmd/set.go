@@ -24,6 +24,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var targetGlobal = false
+var targetSystem = false
+var targetLocal = false
+
 // setCmd represents the set command
 var setCmd = &cobra.Command{
 	Use:   "set",
@@ -35,10 +39,30 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// とりあえず今だけグローバルユーザーに自動でセットさせる
-		gu, err := gituser.New(gituser.TargetScopeGlobal)
-		if err != nil {
-			os.Exit(1)
+		var gu gituser.GitUser
+		var err error
+		if targetGlobal {
+			gu, err = gituser.New(gituser.TargetScopeGlobal)
+			if err != nil {
+				os.Exit(1)
+			}
+		} else if targetLocal {
+			gu, err = gituser.New(gituser.TargetScopeLocal)
+			if err != nil {
+				os.Exit(1)
+			}
+		} else if targetSystem {
+			gu, err = gituser.New(gituser.TargetScopeSystem)
+			if err != nil {
+				os.Exit(1)
+			}
+		} else {
+			//とりあえずデフォルトはグローバルかな。頻繁に設定すると思うし。
+			//内心自動で現在有効なスコープを特定して設定するの面倒くさい
+			gu, err = gituser.New(gituser.TargetScopeGlobal)
+			if err != nil {
+				os.Exit(1)
+			}
 		}
 		c := profile.Profiles{}
 		if err := c.Load(); err != nil {
@@ -69,6 +93,9 @@ to quickly create a Cobra application.`,
 }
 
 func init() {
+	setCmd.Flags().BoolVarP(&targetGlobal, "global", "g", false, "")
+	setCmd.Flags().BoolVarP(&targetSystem, "system", "s", false, "")
+	setCmd.Flags().BoolVarP(&targetLocal, "local", "l", false, "")
 	rootCmd.AddCommand(setCmd)
 
 	// Here you will define your flags and configuration settings.
