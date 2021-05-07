@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"git-user-switch/profile"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -44,10 +45,12 @@ to quickly create a Cobra application.`,
 			fmt.Print("error :profile values must be specified\n")
 			os.Exit(1)
 		}
+		targetURLs := strings.Split(args[3], `,`)
 		if err := c.Set(profile.Profile{
-			Name:     args[0],
-			Email:    args[1],
-			NickName: args[2],
+			Name:                 args[0],
+			Email:                args[1],
+			NickName:             args[2],
+			InsertUsernameTarget: targetURLs,
 		}); err != nil {
 			fmt.Printf("error : %s\n", err)
 			os.Exit(1)

@@ -14,9 +14,10 @@ var config = homedir + string(os.PathSeparator) + configName
 
 type Profiles []Profile
 type Profile struct {
-	Name     string
-	Email    string
-	NickName string
+	Name                 string
+	Email                string
+	NickName             string
+	InsertUsernameTarget []string
 }
 
 func (ps *Profiles) Load() error {
