@@ -183,6 +183,7 @@ func (g *GitUser) genModifiedConfig() (*config.Config, error) {
 	}
 	c.User.Name = g.Name
 	c.User.Email = g.Email
+	c.URLs = map[string]*config.URL{}
 	for _, url := range g.InsertUsernameTarget {
 		// expect url is `https://example.com`
 		parsed := strings.Split(url, `://`)
