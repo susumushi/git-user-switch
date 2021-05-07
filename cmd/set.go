@@ -73,6 +73,7 @@ to quickly create a Cobra application.`,
 			if p.NickName == args[0] {
 				gu.Name = p.Name
 				gu.Email = p.Email
+				gu.InsertUsernameTarget = p.InsertUsernameTarget
 				if err := gu.SetConfig(); err != nil {
 					fmt.Printf("error : %s\n", err)
 					os.Exit(1)

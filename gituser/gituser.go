@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
@@ -34,14 +35,16 @@ type GitUser struct {
 	targetScope TargetScope
 
 	//config config.Config
-	Name  string
-	Email string
+	Name                 string
+	Email                string
+	InsertUsernameTarget []string
 }
 
 func New(scope TargetScope) (GitUser, error) {
 	gu := GitUser{
 		targetScope: scope,
 	}
+
 	if err := gu.loadUser(); err != nil {
 		return GitUser{}, fmt.Errorf("failed to New. %s", err)
 	}
@@ -128,6 +131,7 @@ func getConfigFromLocalRepo() (*config.Config, error) {
 
 func (g *GitUser) SetConfig() error {
 	c, err := g.genModifiedConfig()
+
 	if err != nil {
 		return err
 	}
@@ -166,6 +170,10 @@ func (g *GitUser) SetConfig() error {
 func (g *GitUser) setConfigToStruct(c config.Config) {
 	g.Name = c.User.Name
 	g.Email = c.User.Email
+	g.InsertUsernameTarget = []string{}
+	for _, urls := range c.URLs {
+		g.InsertUsernameTarget = append(g.InsertUsernameTarget, urls.InsteadOf)
+	}
 }
 
 func (g *GitUser) genModifiedConfig() (*config.Config, error) {
@@ -175,6 +183,28 @@ func (g *GitUser) genModifiedConfig() (*config.Config, error) {
 	}
 	c.User.Name = g.Name
 	c.User.Email = g.Email
+	c.URLs = map[string]*config.URL{}
+	for _, url := range g.InsertUsernameTarget {
+		// expect url is `https://example.com`
+		parsed := strings.Split(url, `://`)
+		host := parsed[1]
+		prefix := parsed[0] + `://`
+		URLWithUsername := prefix + g.Name + `@` + host
+
+		c.URLs[URLWithUsername] = &config.URL{
+			Name:      URLWithUsername,
+			InsteadOf: url,
+		}
+	}
+	//url := `https://example.com`
+	//parsed := strings.Split(url, `://`)
+	//host := parsed[1]
+	//prefix := parsed[0] + `://`
+	////c.URLs["https://github.com"].ApplyInsteadOf(prefix + g.Name + `@` + host)
+	//c.URLs["https://example.com"] = &config.URL{
+	//	Name:      url,
+	//	InsteadOf: prefix + g.Name + `@` + host,
+	//}
 	return c, nil
 
 }
