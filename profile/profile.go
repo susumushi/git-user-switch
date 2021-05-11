@@ -23,10 +23,10 @@ type Profile struct {
 func (ps *Profiles) Load() error {
 	bs, err := os.ReadFile(config)
 	if err != nil {
-		return fmt.Errorf("failed to load user profile.: %s", err)
+		return fmt.Errorf("failed to load user profile: %s", err)
 	}
 	if err = json.Unmarshal(bs, ps); err != nil {
-		return fmt.Errorf("failed to load user profile.: %s", err)
+		return fmt.Errorf("failed to load user profile: %s", err)
 	}
 	return nil
 }
@@ -34,10 +34,10 @@ func (ps *Profiles) Load() error {
 func (ps *Profiles) Save() error {
 	bs, err := json.Marshal(ps)
 	if err != nil {
-		return fmt.Errorf("failed to write user profile.: %s", err)
+		return fmt.Errorf("failed to write user profile: %s", err)
 	}
 	if err = os.WriteFile(config, bs, 0664); err != nil {
-		return fmt.Errorf("failed to write user profile.: %s", err)
+		return fmt.Errorf("failed to write user profile: %s", err)
 	}
 	return nil
 }
@@ -46,10 +46,10 @@ func (ps *Profiles) Flush() error {
 	*ps = Profiles{}
 	bs, err := json.Marshal(ps)
 	if err != nil {
-		return fmt.Errorf("failed to flush profile.: %s", err)
+		return fmt.Errorf("failed to flush profile: %s", err)
 	}
 	if err = os.WriteFile(config, bs, 0664); err != nil {
-		return fmt.Errorf("failed to flush user profile.: %s", err)
+		return fmt.Errorf("failed to flush user profile: %s", err)
 	}
 	return nil
 }

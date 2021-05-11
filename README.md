@@ -7,7 +7,7 @@ make
 
 
 ## Display current git user in bash prompt.
-Add below code to .bachrc
+Add below code to .bashrc
 
 ```
 export BASE_PS1=${PS1}
