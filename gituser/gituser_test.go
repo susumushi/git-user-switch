@@ -9,8 +9,11 @@ import (
 
 func TestGetLocalRepo(t *testing.T) {
 	t.Run("if git repository dose not exist, then return error", func(t *testing.T) {
-		os.Chdir(`/tmp`)
-		_, err := getLocalRepo()
+		err := os.Chdir(`/tmp`)
+		assert.NoError(t, err)
+
+		r, err := getLocalRepo()
+		assert.Nil(t, r)
 		assert.Error(t, err)
 	})
 }

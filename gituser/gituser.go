@@ -74,22 +74,22 @@ func (g *GitUser) getConfig() (*config.Config, error) {
 		if err == nil && c.User.Name != "" {
 			return c, nil
 		}
-		return &config.Config{}, fmt.Errorf("failed to config load from auto scope target: %s", err)
+		return nil, fmt.Errorf("failed to config load from auto scope target: %s", err)
 
 	} else if g.targetScope == TargetScopeLocal {
 		c, err := getConfigFromLocalRepo()
 		if err != nil {
-			return &config.Config{}, fmt.Errorf("config get error: %s", err)
+			return nil, fmt.Errorf("config get error: %s", err)
 		}
 		return c, nil
 	} else {
 		configScope, err := mapTargetScopeToConfigScope(g.targetScope)
 		if err != nil {
-			return &config.Config{}, fmt.Errorf("failed to config load from global scope or system scope: %s", err)
+			return nil, fmt.Errorf("failed to config load from global scope or system scope: %s", err)
 		}
 		c, err := config.LoadConfig(configScope)
 		if err != nil {
-			return &config.Config{}, fmt.Errorf("failed to config load from global scope or system scope: %s", err)
+			return nil, fmt.Errorf("failed to config load from global scope or system scope: %s", err)
 		}
 		return c, nil
 	}
@@ -111,7 +111,7 @@ func getLocalRepo() (*git.Repository, error) {
 		}
 	}
 	if err != nil {
-		return &git.Repository{}, fmt.Errorf("git repository is not found: %s", err)
+		return nil, fmt.Errorf("git repository is not found: %s", err)
 	}
 
 	return repo, nil
@@ -120,11 +120,11 @@ func getLocalRepo() (*git.Repository, error) {
 func getConfigFromLocalRepo() (*config.Config, error) {
 	repo, err := getLocalRepo()
 	if err != nil {
-		return &config.Config{}, fmt.Errorf("failed to config load from local scope: %s", err)
+		return nil, fmt.Errorf("failed to config load from local scope: %s", err)
 	}
 	c, err := repo.Storer.Config()
 	if err != nil {
-		return &config.Config{}, fmt.Errorf("failed to config load from local scope: %s", err)
+		return nil, fmt.Errorf("failed to config load from local scope: %s", err)
 	}
 	return c, nil
 }
