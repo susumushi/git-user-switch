@@ -16,3 +16,6 @@
 
 # Visual studio code config directory
 .vscode/
+
+# Execution file
+git-user-switch
