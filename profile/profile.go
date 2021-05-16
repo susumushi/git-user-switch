@@ -7,11 +7,6 @@ import (
 	"os"
 )
 
-const configName = ".gitusconfig"
-
-var homedir, _ = os.UserHomeDir()
-var config = homedir + string(os.PathSeparator) + configName
-
 type Profiles []Profile
 type Profile struct {
 	Name                 string
@@ -20,8 +15,8 @@ type Profile struct {
 	InsertUsernameTarget []string
 }
 
-func (ps *Profiles) Load() error {
-	bs, err := os.ReadFile(config)
+func (ps *Profiles) Load(configPath string) error {
+	bs, err := os.ReadFile(configPath)
 	if err != nil {
 		return fmt.Errorf("failed to load user profile: %s", err)
 	}
@@ -31,24 +26,24 @@ func (ps *Profiles) Load() error {
 	return nil
 }
 
-func (ps *Profiles) Save() error {
+func (ps *Profiles) Save(configPath string) error {
 	bs, err := json.Marshal(ps)
 	if err != nil {
 		return fmt.Errorf("failed to write user profile: %s", err)
 	}
-	if err = os.WriteFile(config, bs, 0664); err != nil {
+	if err = os.WriteFile(configPath, bs, 0664); err != nil {
 		return fmt.Errorf("failed to write user profile: %s", err)
 	}
 	return nil
 }
 
-func (ps *Profiles) Flush() error {
+func (ps *Profiles) Flush(configPath string) error {
 	*ps = Profiles{}
 	bs, err := json.Marshal(ps)
 	if err != nil {
 		return fmt.Errorf("failed to flush profile: %s", err)
 	}
-	if err = os.WriteFile(config, bs, 0664); err != nil {
+	if err = os.WriteFile(configPath, bs, 0664); err != nil {
 		return fmt.Errorf("failed to flush user profile: %s", err)
 	}
 	return nil

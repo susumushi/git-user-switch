@@ -1,15 +1,19 @@
 package profile
 
 import (
+	"git-user-switch/utils"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestProfile(t *testing.T) {
+	conf := utils.GenAbsoluteHomeDirPathWithConfig("gitus_test_profile")
 	t.Run("entry", func(t *testing.T) {
 		ps := Profiles{}
-		err := ps.Load()
+		err := ps.Flush(conf)
+		assert.NoError(t, err)
+		err = ps.Load(conf)
 		assert.NoError(t, err)
 
 		err = ps.Set(Profile{
@@ -19,9 +23,9 @@ func TestProfile(t *testing.T) {
 		})
 		assert.NoError(t, err)
 
-		err = ps.Save()
+		err = ps.Save(conf)
 		assert.NoError(t, err)
-		err = ps.Flush()
+		err = ps.Flush(conf)
 		assert.NoError(t, err)
 	})
 }
