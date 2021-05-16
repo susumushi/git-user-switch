@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 
 	"git-user-switch/gituser"
 	"git-user-switch/profile"
@@ -35,16 +34,15 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		// ゲットはローカル→グローバル→システムの優先順で検索しにいく。
 		gu, err := gituser.New(gituser.TargetScopeAuto)
 		if err != nil {
-			os.Exit(1)
+			return err
 		}
 		c := profile.Profiles{}
 		if err := c.Load(); err != nil {
-			fmt.Printf("error : %s\n", err)
-			os.Exit(1)
+			return err
 		}
 		notMached := true
 		for _, p := range c {
@@ -56,6 +54,7 @@ to quickly create a Cobra application.`,
 		if notMached {
 			fmt.Println("undefined user")
 		}
+		return nil
 	},
 }
 

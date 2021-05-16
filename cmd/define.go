@@ -16,9 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
+	"errors"
 	"git-user-switch/profile"
-	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -34,7 +33,7 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		c := profile.Profiles{}
 		c.Load()
 		//if err := c.Load(); err != nil {
@@ -42,8 +41,7 @@ to quickly create a Cobra application.`,
 		//os.Exit(1)
 		//}
 		if len(args) < 3 {
-			fmt.Print("error :profile values must be specified\n")
-			os.Exit(1)
+			return errors.New("profile values must be specified")
 		}
 		targetURLs := strings.Split(args[3], `,`)
 		if err := c.Set(profile.Profile{
@@ -52,13 +50,12 @@ to quickly create a Cobra application.`,
 			NickName:             args[2],
 			InsertUsernameTarget: targetURLs,
 		}); err != nil {
-			fmt.Printf("error : %s\n", err)
-			os.Exit(1)
+			return err
 		}
 		if err := c.Save(); err != nil {
-			fmt.Printf("error : %s\n", err)
-			os.Exit(1)
+			return err
 		}
+		return nil
 	},
 }
 
