@@ -18,7 +18,6 @@ package cmd
 import (
 	"fmt"
 	"git-user-switch/profile"
-	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -33,13 +32,13 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		c := profile.Profiles{}
 		if err := c.Load(); err != nil {
-			fmt.Printf("error : %s\n", err)
-			os.Exit(1)
+			return err
 		}
 		fmt.Printf("%v\n", c)
+		return nil
 	},
 }
 

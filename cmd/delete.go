@@ -16,9 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
+	"errors"
 	"git-user-switch/profile"
-	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -34,16 +33,14 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		c := profile.Profiles{}
 		if err := c.Load(); err != nil {
-			fmt.Printf("error : %s\n", err)
-			os.Exit(1)
+			return err
 		}
 
 		if len(args) < 1 {
-			fmt.Print("error :delete target nickname must be specified\n")
-			os.Exit(1)
+			return errors.New("delete target nickname must be specified")
 		}
 
 		notMatched := true
@@ -54,13 +51,12 @@ to quickly create a Cobra application.`,
 			}
 		}
 		if notMatched {
-			fmt.Print("error :delete target nickname not found\n")
-			os.Exit(1)
+			return errors.New("delete target nickname not found")
 		}
 		if err := c.Save(); err != nil {
-			fmt.Printf("error : %s\n", err)
-			os.Exit(1)
+			return err
 		}
+		return nil
 	},
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		ps := profile.Profiles{}
