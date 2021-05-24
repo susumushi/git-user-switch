@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"git-user-switch/utils"
 	"os"
 )
 
@@ -15,8 +16,12 @@ type Profile struct {
 	InsertUsernameTarget []string
 }
 
-func (ps *Profiles) Load(configPath string) error {
-	bs, err := os.ReadFile(configPath)
+func (ps *Profiles) Load(config string) error {
+	absPath, err := utils.PathParser(config)
+	if err != nil {
+		return fmt.Errorf("failed to load user profile: %s", err)
+	}
+	bs, err := os.ReadFile(absPath)
 	if err != nil {
 		return fmt.Errorf("failed to load user profile: %s", err)
 	}
@@ -26,24 +31,32 @@ func (ps *Profiles) Load(configPath string) error {
 	return nil
 }
 
-func (ps *Profiles) Save(configPath string) error {
+func (ps *Profiles) Save(config string) error {
 	bs, err := json.Marshal(ps)
 	if err != nil {
 		return fmt.Errorf("failed to write user profile: %s", err)
 	}
-	if err = os.WriteFile(configPath, bs, 0664); err != nil {
+	absPath, err := utils.PathParser(config)
+	if err != nil {
+		return fmt.Errorf("failed to write user profile: %s", err)
+	}
+	if err = os.WriteFile(absPath, bs, 0664); err != nil {
 		return fmt.Errorf("failed to write user profile: %s", err)
 	}
 	return nil
 }
 
-func (ps *Profiles) Flush(configPath string) error {
+func (ps *Profiles) Flush(config string) error {
 	*ps = Profiles{}
 	bs, err := json.Marshal(ps)
 	if err != nil {
 		return fmt.Errorf("failed to flush profile: %s", err)
 	}
-	if err = os.WriteFile(configPath, bs, 0664); err != nil {
+	absPath, err := utils.PathParser(config)
+	if err != nil {
+		return fmt.Errorf("failed to flush user profile: %s", err)
+	}
+	if err = os.WriteFile(absPath, bs, 0664); err != nil {
 		return fmt.Errorf("failed to flush user profile: %s", err)
 	}
 	return nil

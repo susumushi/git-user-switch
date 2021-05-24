@@ -34,7 +34,7 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		c := profile.Profiles{}
-		if err := c.Load(); err != nil {
+		if err := c.Load(config); err != nil {
 			return err
 		}
 		fmt.Printf("%v\n", c)

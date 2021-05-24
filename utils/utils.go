@@ -1,9 +1,20 @@
 package utils
 
-import "os"
+import (
+	"fmt"
+	"os"
+	"path/filepath"
+)
 
-func GenAbsoluteHomeDirPathWithConfig(configName string) string {
-	homedir, _ := os.UserHomeDir()
-	config := homedir + string(os.PathSeparator) + configName
-	return config
+func PathParser(path string) (string, error) {
+	if filepath.IsAbs(path) {
+		return path, nil
+	} else {
+		homedir, err := os.UserHomeDir()
+		if err != nil {
+			return "", fmt.Errorf("path parse error :%s", err)
+		}
+		config := homedir + string(os.PathSeparator) + path
+		return config, nil
+	}
 }

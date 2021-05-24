@@ -41,7 +41,7 @@ to quickly create a Cobra application.`,
 			return err
 		}
 		c := profile.Profiles{}
-		if err := c.Load(); err != nil {
+		if err := c.Load(config); err != nil {
 			return err
 		}
 		notMached := true

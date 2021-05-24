@@ -1,14 +1,13 @@
 package profile
 
 import (
-	"git-user-switch/utils"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestProfile(t *testing.T) {
-	conf := utils.GenAbsoluteHomeDirPathWithConfig("gitus_test_profile")
+	conf := "gitus_test_profile"
 	t.Run("entry", func(t *testing.T) {
 		ps := Profiles{}
 		err := ps.Flush(conf)
