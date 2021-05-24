@@ -35,7 +35,7 @@ to quickly create a Cobra application.`,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		c := profile.Profiles{}
-		if err := c.Load(); err != nil {
+		if err := c.Load(config); err != nil {
 			return err
 		}
 
@@ -53,14 +53,14 @@ to quickly create a Cobra application.`,
 		if notMatched {
 			return errors.New("delete target nickname not found")
 		}
-		if err := c.Save(); err != nil {
+		if err := c.Save(config); err != nil {
 			return err
 		}
 		return nil
 	},
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		ps := profile.Profiles{}
-		ps.Load()
+		ps.Load(config)
 
 		nicknames := []string{}
 		for _, p := range ps {

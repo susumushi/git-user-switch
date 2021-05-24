@@ -62,7 +62,7 @@ switching by scope flags.`,
 			}
 		}
 		c := profile.Profiles{}
-		if err := c.Load(); err != nil {
+		if err := c.Load(config); err != nil {
 			return err
 		}
 		profileIsNotMatched := true
@@ -84,7 +84,7 @@ switching by scope flags.`,
 	},
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		ps := profile.Profiles{}
-		ps.Load()
+		ps.Load(config)
 
 		nicknames := []string{}
 		for _, p := range ps {
