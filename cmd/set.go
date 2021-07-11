@@ -71,7 +71,11 @@ switching by scope flags.`,
 				profileIsNotMatched = false
 				gu.Name = p.Name
 				gu.Email = p.Email
-				gu.InsertUsernameTarget = p.InsertUsernameTarget
+				// グローバル以上でURL置換をセットしちゃうとローカルスコープ側が優先されないので、
+				// URL置換はローカルスコープのみ動作するようにした
+				if targetLocal {
+					gu.InsertUsernameTarget = p.InsertUsernameTarget
+				}
 				if err := gu.SetConfig(); err != nil {
 					return err
 				}
