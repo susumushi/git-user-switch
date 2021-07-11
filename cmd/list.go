@@ -16,6 +16,7 @@ limitations under the License.
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
 	"git-user-switch/profile"
 
@@ -37,7 +38,11 @@ to quickly create a Cobra application.`,
 		if err := c.Load(config); err != nil {
 			return err
 		}
-		fmt.Printf("%v\n", c)
+		pretyJson, err := json.MarshalIndent(c, "", "    ")
+		if err != nil {
+			fmt.Printf("failed to json parse: %v", err)
+		}
+		fmt.Printf("%s\n", pretyJson)
 		return nil
 	},
 }
